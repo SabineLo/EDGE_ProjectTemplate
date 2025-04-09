@@ -1,41 +1,75 @@
+#Our Imports 
+#CSV stands for Comma Separated Values a file format 
 import time
 import csv
 import pandas as pd
 from selenium import webdriver
 from selenium.webdriver.common.by import By
 
+#python WebScraping.py
+
 # -----------------------
 # Webscraping by Sabine
 # -----------------------
 
 # Set up Selenium WebDriver
+
 options = webdriver.ChromeOptions()
 options.add_argument("--log-level=3")  # Suppress warnings
+#Shows us Chrome :D
 driver = webdriver.Chrome(options=options)
 
 # Open IMDb page
 url = "https://www.imdb.com/list/ls009487211/?sort=list_order,asc"
+#It is opening the URL in the Chrome browser
 driver.get(url)
 
 # Wait for the page to load
 time.sleep(3)  # Adjust if needed
 
 # Extract movie elements
+#Lets find this data !
+#Goal is to find the class names for the movie title, meta score, star rating, director, and metadata (year, runtime, rating).
 movies = driver.find_elements(By.CSS_SELECTOR, "h3.ipc-title__text")
 meta_scores = driver.find_elements(By.CSS_SELECTOR, "span.sc-b0901df4-0.bXIOoL.metacritic-score-box")
 star_ratings = driver.find_elements(By.CSS_SELECTOR, "span.ipc-rating-star--rating")
 directors = driver.find_elements(By.CSS_SELECTOR, "a.ipc-link.ipc-link--base.sttd-director-item")
+
+# Metadata (Year, Runtime, Rating)
 metadata_containers = driver.find_elements(By.CSS_SELECTOR, "div.sc-2bbfc9e9-6.cZkKPy.dli-title-metadata")
 
 # Prepare data storage
 movies_data = []
 
 # Loop through movies
+#This is a for loop that iterates through the range of the length of the movies list.
 for i in range(len(movies)):
-    movie_title = movies[i].text.strip() if i < len(movies) else "N/A"
-    meta_score = meta_scores[i].text.strip() if i < len(meta_scores) else "N/A"
-    star_rating = star_ratings[i].text.strip() if i < len(star_ratings) else "N/A"
-    director = directors[i].text.strip() if i < len(directors) else "N/A"
+    #movies[i] is the i-th movie title in the list of movies.
+    #This checks if i is a valid index in the movies list (i.e., it ensures i is less than the length of the list).
+    #[2,3,2,3,4] = len(movies) = 5
+    if i < len(movies):
+        #text.strip() is a method that removes any leading or trailing whitespace from the text.
+        movie_title = movies[i].text.strip()
+    else:
+        movie_title = "N/A"
+
+# For meta score
+    if i < len(meta_scores):
+        meta_score = meta_scores[i].text.strip()
+    else:
+        meta_score = "N/A"
+
+    # For star rating
+    if i < len(star_ratings):
+        star_rating = star_ratings[i].text.strip()
+    else:
+        star_rating = "N/A"
+
+    # For director
+    if i < len(directors):
+        director = directors[i].text.strip()
+    else:
+        director = "N/A"
 
     # Extract metadata (Year, Runtime, Rating)
     if i < len(metadata_containers):
@@ -47,8 +81,11 @@ for i in range(len(movies)):
         year, runtime, rating = "N/A", "N/A", "N/A"
 
     # Store movie data
+    #append is a method that adds an element to the end of a list.
     movies_data.append([movie_title, meta_score, star_rating, director, year, runtime, rating])
 
+    #Print format print(f"Movie: {movie}") 
+    #The f allows you to input the variables directly into the string using curly braces {}.
     print(f"Movie: {movie_title}")
     print(f"Meta Score: {meta_score}")
     print(f"Star Rating: {star_rating}")
@@ -59,15 +96,21 @@ for i in range(len(movies)):
     print("-" * 40)
 
 # Save to CSV
+
 csv_filename = "imdb_movies.csv"
+#What this does is it creates a CSV file called imdb_movies.csv in the same directory as this script.
+#The mode "w" means that we are opening the file in write mode, which means that if the file already exists, it will be overwritten.
+#The newline="" argument is used to prevent extra blank lines from being added between rows in the CSV file.
 with open(csv_filename, mode="w", newline="", encoding="utf-8") as file:
     writer = csv.writer(file)
+    # Write header row
     writer.writerow(["Title", "Meta Score", "Star Rating", "Director", "Year", "Runtime", "Rating"])
     writer.writerows(movies_data)
 
 print(f"Data successfully saved to {csv_filename}")
 
 # Close Selenium
+#Because we want to close the browser window and end the WebDriver session.
 driver.quit()
 
 
