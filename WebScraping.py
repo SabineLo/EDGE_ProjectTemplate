@@ -28,15 +28,17 @@ driver.get(url)
 time.sleep(3)  # Adjust if needed
 
 # Extract movie elements
+#CSS Selectors are used to select elements from the HTML document based on their class names, IDs, or other attributes.
 #Lets find this data !
 #Goal is to find the class names for the movie title, meta score, star rating, director, and metadata (year, runtime, rating).
-movies = driver.find_elements(By.CSS_SELECTOR, "h3.ipc-title__text")
-meta_scores = driver.find_elements(By.CSS_SELECTOR, "span.sc-b0901df4-0.bXIOoL.metacritic-score-box")
-star_ratings = driver.find_elements(By.CSS_SELECTOR, "span.ipc-rating-star--rating")
-directors = driver.find_elements(By.CSS_SELECTOR, "a.ipc-link.ipc-link--base.sttd-director-item")
+movies = driver.find_elements(By.CSS_SELECTOR, "______")
+meta_scores = driver.find_elements(By.CSS_SELECTOR, "_______")
+star_ratings = driver.find_elements(By.CSS_SELECTOR, "__________")
+directors = driver.find_elements(By.CSS_SELECTOR, "_________")
 
 # Metadata (Year, Runtime, Rating)
-metadata_containers = driver.find_elements(By.CSS_SELECTOR, "div.sc-2bbfc9e9-6.cZkKPy.dli-title-metadata")
+#Might be a bit complicated
+metadata_containers = driver.find_elements(By.CSS_SELECTOR, "_____")
 
 # Prepare data storage
 movies_data = []
@@ -73,26 +75,26 @@ for i in range(len(movies)):
 
     # Extract metadata (Year, Runtime, Rating)
     if i < len(metadata_containers):
-        metadata_items = metadata_containers[i].find_elements(By.CSS_SELECTOR, "span.sc-2bbfc9e9-7.jttFlJ.dli-title-metadata-item")
-        year = metadata_items[0].text.strip() if len(metadata_items) > 0 else "N/A"
-        runtime = metadata_items[1].text.strip() if len(metadata_items) > 1 else "N/A"
-        rating = metadata_items[2].text.strip() if len(metadata_items) > 2 else "N/A"
+        metadata_items = metadata_containers[i].find_elements(By.CSS_SELECTOR, "___________")
+        year = metadata_items['_'].text.strip() if len(metadata_items) > 0 else "N/A"
+        runtime = metadata_items['_'].text.strip() if len(metadata_items) > 1 else "N/A"
+        rating = metadata_items['_'].text.strip() if len(metadata_items) > 2 else "N/A"
     else:
         year, runtime, rating = "N/A", "N/A", "N/A"
 
     # Store movie data
     #append is a method that adds an element to the end of a list.
-    movies_data.append([movie_title, meta_score, star_rating, director, year, runtime, rating])
+    movies_data.append(['____', '_____', '____', '___', '___', '____', '___'])
 
     #Print format print(f"Movie: {movie}") 
     #The f allows you to input the variables directly into the string using curly braces {}.
     print(f"Movie: {movie_title}")
-    print(f"Meta Score: {meta_score}")
-    print(f"Star Rating: {star_rating}")
-    print(f"Director: {director}")
-    print(f"Year: {year}")
-    print(f"Runtime: {runtime}")
-    print(f"Rating: {rating}")
+    print(f"Meta Score: {'_______'}")
+    print(f"Star Rating: {'_______'}")
+    print(f"Director: {'_______'}")
+    print(f"Year: {'_______'}")
+    print(f"Runtime: {'_______'}")
+    print(f"Rating: {'_______'}")
     print("-" * 40)
 
 # Save to CSV
@@ -119,6 +121,10 @@ driver.quit()
 # -------------------------------
 
 # Now, let's load the scraped data into a Pandas Dataframe!
+#What is Pandas?
+#Pandas is a powerful data analysis and manipulation library for Python.
+#Uncomment out !
+"""
 df = pd.read_csv("imdb_movies.csv")
 
 # Let's take a peek at the first few rows of the dataframe
@@ -146,6 +152,8 @@ print("Removed numbering in Title")
 print(df.head())
 
 # Right now the Runtime of the movies is in hour and minute format as a String. Let's represent it as a float value!
+#What is float value?
+#A float value is a number that has a decimal point.
 # (note to Sabine: you can have them fill in the blanks to the code below so it's not so hard)
 def runtime_to_minutes(runtime_str):
     if pd.isna(runtime_str):
@@ -192,3 +200,4 @@ print(df["Director"].value_counts().head(5))
 print("\n🕒 Longest Movie:")
 longest = df.sort_values("Runtime", ascending=False).iloc[0]
 print(longest[["Title", "Runtime", "Year", "Star Rating"]])
+"""
