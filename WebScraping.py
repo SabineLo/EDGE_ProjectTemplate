@@ -60,7 +60,7 @@ with open(csv_filename, mode="w", newline="", encoding="utf-8") as file:
     writer.writerow(["Title", "Meta Score", "Star Rating", "Director", "Year", "Runtime", "Rating"])
     writer.writerows(movies_data)
 
-print(f"✅ Data successfully saved to {csv_filename}")
+print(f"Data successfully saved to {csv_filename}")
 
 # Close Selenium
 driver.quit()
