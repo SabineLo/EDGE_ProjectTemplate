@@ -117,7 +117,7 @@ driver.quit()
 # -------------------------------
 # Cleaning & Analysis by Minjoo
 # -------------------------------
-"""
+
 # Now, let's load the scraped data into a Pandas Dataframe!
 df = pd.read_csv("imdb_movies.csv")
 
@@ -192,4 +192,3 @@ print(df["Director"].value_counts().head(5))
 print("\n🕒 Longest Movie:")
 longest = df.sort_values("Runtime", ascending=False).iloc[0]
 print(longest[["Title", "Runtime", "Year", "Star Rating"]])
-"""
