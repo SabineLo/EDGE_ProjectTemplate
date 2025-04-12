@@ -2,6 +2,7 @@
 #CSV stands for Comma Separated Values a file format 
 import time
 import csv
+#Pandas is a powerful data analysis library for Python.
 import pandas as pd
 from selenium import webdriver
 from selenium.webdriver.common.by import By
@@ -25,11 +26,18 @@ url = "https://www.imdb.com/list/ls009487211/?sort=list_order,asc"
 driver.get(url)
 
 # Wait for the page to load
-time.sleep(3)  # Adjust if needed
+time.sleep(10)  # Adjust if needed
+
 
 # Extract movie elements
 #Lets find this data !
 #Goal is to find the class names for the movie title, meta score, star rating, director, and metadata (year, runtime, rating).
+
+#It is using the Selenium WebDriver to find elements on the web page using CSS selectors.
+
+#What us the CSS selector?
+#CSS Selectors are used to select elements from the HTML document based on their class names, IDs, or other attributes.
+
 movies = driver.find_elements(By.CSS_SELECTOR, "h3.ipc-title__text")
 meta_scores = driver.find_elements(By.CSS_SELECTOR, "span.sc-b0901df4-0.bXIOoL.metacritic-score-box")
 star_ratings = driver.find_elements(By.CSS_SELECTOR, "span.ipc-rating-star--rating")
@@ -46,7 +54,7 @@ movies_data = []
 for i in range(len(movies)):
     #movies[i] is the i-th movie title in the list of movies.
     #This checks if i is a valid index in the movies list (i.e., it ensures i is less than the length of the list).
-    #[2,3,2,3,4] = len(movies) = 5
+    #[2,3,2,3,9] = len(movies) = 5
     if i < len(movies):
         #text.strip() is a method that removes any leading or trailing whitespace from the text.
         movie_title = movies[i].text.strip()
@@ -118,6 +126,7 @@ driver.quit()
 # Cleaning & Analysis by Minjoo
 # -------------------------------
 
+
 # Now, let's load the scraped data into a Pandas Dataframe!
 df = pd.read_csv("imdb_movies.csv")
 
@@ -126,7 +135,9 @@ print("Initial dataframe:")
 print(df.head())
 
 # Then drop rows with any missing values
+#So we are replacing the string "N/A" with a Pandas NA value (pd.NA)
 df = df.replace("N/A", pd.NA) 
+#This is a method that removes any rows with missing values from the DataFrame.
 df = df.dropna()
 
 # Let's get rid of the numbering in the Title column
@@ -146,7 +157,6 @@ print("Removed numbering in Title")
 print(df.head())
 
 # Right now the Runtime of the movies is in hour and minute format as a String. Let's represent it as a float value!
-# (note to Sabine: you can have them fill in the blanks to the code below so it's not so hard)
 def runtime_to_minutes(runtime_str):
     if pd.isna(runtime_str):
         return None
@@ -172,9 +182,7 @@ print(df.head())
 # Cleaning is done! Note that usually data cleaning can be a very long process for more complicated datasets, 
 # especially if model training is involved! 
 
-
 # Let's print some analysis!
-
 
 # Top 5 highest-rated movies
 print("\n🎖 Top 5 Movies by Star Rating:")

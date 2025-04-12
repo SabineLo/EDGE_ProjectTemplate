@@ -2,6 +2,7 @@
 #CSV stands for Comma Separated Values a file format 
 import time
 import csv
+#Pandas is a powerful data analysis and manipulation library for Python.
 import pandas as pd
 from selenium import webdriver
 from selenium.webdriver.common.by import By
@@ -13,7 +14,6 @@ from selenium.webdriver.common.by import By
 # -----------------------
 
 # Set up Selenium WebDriver
-
 options = webdriver.ChromeOptions()
 options.add_argument("--log-level=3")  # Suppress warnings
 #Shows us Chrome :D
@@ -25,30 +25,30 @@ url = "https://www.imdb.com/list/ls009487211/?sort=list_order,asc"
 driver.get(url)
 
 # Wait for the page to load
-time.sleep(3)  # Adjust if needed
+time.sleep(10)  # Adjust if needed
 
-# Extract movie elements
-#CSS Selectors are used to select elements from the HTML document based on their class names, IDs, or other attributes.
 #Lets find this data !
 #Goal is to find the class names for the movie title, meta score, star rating, director, and metadata (year, runtime, rating).
-movies = driver.find_elements(By.CSS_SELECTOR, "______")
-meta_scores = driver.find_elements(By.CSS_SELECTOR, "_______")
-star_ratings = driver.find_elements(By.CSS_SELECTOR, "__________")
-directors = driver.find_elements(By.CSS_SELECTOR, "_________")
+# Extract movie elements
+#CSS Selectors are used to select elements from the HTML document based on their class names, IDs, or other attributes.
+movies = driver.find_elements(By.CSS_SELECTOR, "h3.______")
+meta_scores = driver.find_elements(By.CSS_SELECTOR, "span._______")
+star_ratings = driver.find_elements(By.CSS_SELECTOR, "span.__________")
+directors = driver.find_elements(By.CSS_SELECTOR, "a._________")
 
 # Metadata (Year, Runtime, Rating)
 #Might be a bit complicated
-metadata_containers = driver.find_elements(By.CSS_SELECTOR, "_____")
+metadata_containers = driver.find_elements(By.CSS_SELECTOR, "div._____")
 
 # Prepare data storage
 movies_data = []
 
 # Loop through movies
-#This is a for loop that iterates through the range of the length of the movies list.
+#It's creating a loop that goes through each movie found on the page — one by one — by index.
 for i in range(len(movies)):
-    #movies[i] is the i-th movie title in the list of movies.
-    #This checks if i is a valid index in the movies list (i.e., it ensures i is less than the length of the list).
-    #[2,3,2,3,4] = len(movies) = 5
+    #[2,3,2,3,9] = len(movies) = 5
+    #This checks if i is a valid index in the movies list (i.e., it ensures i is less than the length of the list
+    #We need to make sure i is less then len movies otherwise out of bounds
     if i < len(movies):
         #text.strip() is a method that removes any leading or trailing whitespace from the text.
         movie_title = movies[i].text.strip()
@@ -56,14 +56,15 @@ for i in range(len(movies)):
         movie_title = "N/A"
 
 # For meta score
+#This is a check to see if the index i is within the bounds of the meta_scores list.
     if i < len(meta_scores):
-        meta_score = meta_scores[i].text.strip()
+        meta_score = _______
     else:
         meta_score = "N/A"
 
     # For star rating
     if i < len(star_ratings):
-        star_rating = star_ratings[i].text.strip()
+        star_rating = _________
     else:
         star_rating = "N/A"
 
@@ -76,6 +77,9 @@ for i in range(len(movies)):
     # Extract metadata (Year, Runtime, Rating)
     if i < len(metadata_containers):
         metadata_items = metadata_containers[i].find_elements(By.CSS_SELECTOR, "___________")
+
+        #It checks if the metadata_items list has any elements.
+        #[year, runtime,rating]
         year = metadata_items['_'].text.strip() if len(metadata_items) > 0 else "N/A"
         runtime = metadata_items['_'].text.strip() if len(metadata_items) > 1 else "N/A"
         rating = metadata_items['_'].text.strip() if len(metadata_items) > 2 else "N/A"
@@ -98,9 +102,8 @@ for i in range(len(movies)):
     print("-" * 40)
 
 # Save to CSV
-
 csv_filename = "imdb_movies.csv"
-#What this does is it creates a CSV file called imdb_movies.csv in the same directory as this script.
+#What this does is it creates a CSV file called imdb_movies.csv
 #The mode "w" means that we are opening the file in write mode, which means that if the file already exists, it will be overwritten.
 #The newline="" argument is used to prevent extra blank lines from being added between rows in the CSV file.
 with open(csv_filename, mode="w", newline="", encoding="utf-8") as file:
@@ -154,22 +157,24 @@ print(df.head())
 # Right now the Runtime of the movies is in hour and minute format as a String. Let's represent it as a float value!
 #What is float value?
 #A float value is a number that has a decimal point.
-# (note to Sabine: you can have them fill in the blanks to the code below so it's not so hard)
 def runtime_to_minutes(runtime_str):
+#If empty return none
     if pd.isna(runtime_str):
         return None
     
+    #For example, "2h 30m" will be split into ["2h", "30m"].
     parts = runtime_str.split()
     total_minutes = 0
     
     for part in parts:
-        if 'h' in part:
+        if '_' in part:
             total_minutes += int(part.replace('h', '')) * 60
-        elif 'm' in part:
+        elif '_' in part:
             total_minutes += int(part.replace('m', ''))
     
     return float(total_minutes)
 
+#We are applying the runtime_to_minutes function to the "Runtime" column of the DataFrame.
 df["Runtime"] = df["Runtime"].apply(runtime_to_minutes)
 
 print("Converted Runtime to minutes")
@@ -178,7 +183,8 @@ print(df.head())
 
 
 # Cleaning is done! Note that usually data cleaning can be a very long process for more complicated datasets, 
-# especially if model training is involved! 
+# especially if model training is involved! (making predictions)
+
 
 
 # Let's print some analysis!
@@ -186,7 +192,9 @@ print(df.head())
 
 # Top 5 highest-rated movies
 print("\n🎖 Top 5 Movies by Star Rating:")
-print(df.sort_values("Star Rating", ascending=False)[["Title", "Star Rating", "Year"]].head(5))
+#Ascending=False means we want the highest ratings first.
+print(df.sort_values("column_name", ascending=False)[["Title", "Star Rating", "Year"]].head())
+
 
 # Group by year – average star rating
 print("\n📊 Average Star Rating by Year:")
@@ -198,6 +206,7 @@ print(df["Director"].value_counts().head(5))
 
 # Longest movie
 print("\n🕒 Longest Movie:")
+#ilove[0] means we want the first row of the sorted DataFrame.
 longest = df.sort_values("Runtime", ascending=False).iloc[0]
 print(longest[["Title", "Runtime", "Year", "Star Rating"]])
 """
